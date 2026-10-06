@@ -27,7 +27,14 @@ const curriculumTopics = [
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary">
+    <div className="relative min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary">
+      {/* Subtle professional DSA theme background behind the original UI */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-35 dark:opacity-10"
+        style={{ backgroundImage: `url('/theme-dsa.png')` }}
+        aria-hidden="true"
+      />
+      <div className="relative z-10 flex flex-col min-h-screen bg-background/85 dark:bg-background/90">
       {/* 1. Clean Top Navbar */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-card/85 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -259,6 +266,7 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

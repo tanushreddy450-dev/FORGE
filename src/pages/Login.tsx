@@ -90,15 +90,23 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-primary/20 selection:text-primary">
-      {/* Top Header */}
-      <header className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center transition-colors group-hover:bg-primary/15">
-            <Code2 className="w-5 h-5" />
-          </div>
-          <span className="font-semibold text-lg tracking-tight">FORGE</span>
-        </Link>
+    <div className="relative min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-primary/20 selection:text-primary">
+      {/* Subtle professional Login theme background behind the original UI */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-45 dark:opacity-15"
+        style={{ backgroundImage: `url('/theme-login.png')` }}
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 flex flex-col min-h-screen justify-between bg-background/60 dark:bg-background/80 backdrop-blur-[0.5px]">
+        {/* Top Header */}
+        <header className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center transition-colors group-hover:bg-primary/15">
+              <Code2 className="w-5 h-5" />
+            </div>
+            <span className="font-semibold text-lg tracking-tight">FORGE</span>
+          </Link>
         <div className="flex items-center gap-3">
           <ModeToggle />
         </div>
@@ -305,6 +313,7 @@ export default function Login() {
           <Link to="/signup" className="hover:text-foreground transition-colors">Sign Up</Link>
         </div>
       </footer>
+      </div>
     </div>
   )
 }
