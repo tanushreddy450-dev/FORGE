@@ -81,11 +81,17 @@ export function SocialLoginButtons({ redirectTo, disabled = false }: SocialLogin
       // If configured, navigate to the provider's OAuth flow
       const authUrl = getOAuthAuthorizeUrl(provider, redirectTo);
       window.location.href = authUrl;
-    } catch {
-      // Fallback if backend call fails or provider is unconfigured
+    } catch (err) {
+      console.error(`Failed to verify ${provider} OAuth status:`, err);
+      // For Google: If status pre-check fails unexpectedly (e.g. backend spin-up or network issue),
+      // proceed directly to the backend authorize endpoint, which performs authoritative server-side
+      // configuration validation and redirects to Google if configured or returns an error notice if unconfigured.
       if (provider === "google") {
-        setGoogleError("Google sign-in is not configured yet.");
-      } else {
+        const authUrl = getOAuthAuthorizeUrl(provider, redirectTo);
+        window.location.href = authUrl;
+        return;
+      }
+      if (provider === "linkedin") {
         setLinkedinError("LinkedIn sign-in is not configured yet.");
       }
       setActiveProvider(null);

@@ -44,7 +44,11 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/algomaster"
 
     # --- CORS ---
-    cors_origins: str = "http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174"
+    cors_origins: str = (
+        "http://localhost:5173,http://localhost:5174,http://localhost:3000,"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,"
+        "https://forge-nine-lovat.vercel.app"
+    )
 
     # --- AI / Gemini / Groq ---
     ai_provider: str = "gemini"  # mock | gemini
@@ -61,7 +65,12 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+        origins = [o.strip().rstrip("/") for o in self.cors_origins.split(",") if o.strip()]
+        if self.frontend_url:
+            clean_fe = self.frontend_url.strip().rstrip("/")
+            if clean_fe and clean_fe not in origins:
+                origins.append(clean_fe)
+        return origins
 
     @property
     def is_development(self) -> bool:

@@ -3,7 +3,8 @@
  * Falls back gracefully when backend is unavailable so UI still works with mock data.
  */
 
-const API_BASE = (import.meta.env.VITE_API_URL as string) || "http://localhost:8000";
+const rawApiUrl = (import.meta.env.VITE_API_URL as string) || "http://localhost:8000";
+const API_BASE = rawApiUrl.replace(/\/+$/, "");
 const TOKEN_KEY = "algomaster_token";
 
 export function getToken(): string | null {
@@ -20,14 +21,17 @@ type FetchOpts = RequestInit & { auth?: boolean };
 
 async function apiFetch(path: string, opts: FetchOpts = {}): Promise<unknown> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     ...(opts.headers as Record<string, string> | undefined),
   };
+  if (opts.body && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
   if (opts.auth) {
     const t = getToken();
     if (t) headers["Authorization"] = `Bearer ${t}`;
   }
-  const res = await fetch(`${API_BASE}${path}`, { ...opts, headers });
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const res = await fetch(`${API_BASE}${cleanPath}`, { ...opts, headers });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = (body as { error?: { message?: string } })?.error?.message || (body as { detail?: string })?.detail || `Request failed (${res.status})`;

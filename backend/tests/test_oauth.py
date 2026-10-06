@@ -7,23 +7,25 @@ client = TestClient(app, follow_redirects=False)
 
 
 def test_oauth_status_unconfigured():
-    resp = client.get("/api/auth/oauth/status")
-    assert resp.status_code == 200
-    data = resp.json()
-    assert data["success"] is True
-    assert "google" in data["data"]
-    assert "linkedin" in data["data"]
-    assert data["data"]["google"]["configured"] is False
-    assert data["data"]["linkedin"]["configured"] is False
+    with patch.dict("os.environ", {"GOOGLE_CLIENT_ID": "", "GOOGLE_CLIENT_SECRET": "", "LINKEDIN_CLIENT_ID": "", "LINKEDIN_CLIENT_SECRET": ""}):
+        resp = client.get("/api/auth/oauth/status")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["success"] is True
+        assert "google" in data["data"]
+        assert "linkedin" in data["data"]
+        assert data["data"]["google"]["configured"] is False
+        assert data["data"]["linkedin"]["configured"] is False
 
 
 def test_oauth_authorize_unconfigured_redirects_with_notice():
     import urllib.parse
-    resp = client.get("/api/auth/oauth/google/authorize")
-    assert resp.status_code == 307
-    location = resp.headers["location"]
-    assert "oauth_error=" in location
-    assert "Google sign-in is not configured yet" in urllib.parse.unquote(location)
+    with patch.dict("os.environ", {"GOOGLE_CLIENT_ID": "", "GOOGLE_CLIENT_SECRET": ""}):
+        resp = client.get("/api/auth/oauth/google/authorize")
+        assert resp.status_code == 307
+        location = resp.headers["location"]
+        assert "oauth_error=" in location
+        assert "Google sign-in is not configured yet" in urllib.parse.unquote(location)
 
 
 def test_oauth_authorize_partial_config_notice():
